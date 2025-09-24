@@ -106,30 +106,6 @@ def retreive(repository: str):
     except:
         return []
 
-def create_repo(name: str):
-    """Create a new repository"""
-    try:
-        # Try web storage first
-        response = requests.post(f"{WEB_API_BASE}/repository", json={'name': name})
-        if response.status_code == 201:
-            print(f"Created repository {name} (web)")
-            return
-    except:
-        pass
-    
-    # Fallback to local storage
-    try:
-        _set_main_folder_icon(0)  # Set blank icon for main folder
-        os.makedirs(f"{folder_path}/{name}", exist_ok=True)
-        
-        repos = _get_repositories()
-        if name not in repos:
-            repos.append(name)
-            _save_repositories(repos)
-        print(f"Created repository {name} (local)")
-    except Exception as e:
-        print(f"Creation failed: {e}")
-
 def list_repos():
     """Print all available repositories"""
     try:
@@ -158,9 +134,8 @@ def main():
         print(f"\n=== {APP_NAME} ===")
         print("1. Upload file")
         print("2. Retrieve repository")
-        print("3. Create repository")
-        print("4. List repositories")
-        print("5. Exit")
+        print("3. List repositories")
+        print("4. Exit")
         
         choice = input("\nChoose an option (1-5): ").strip()
         
@@ -174,11 +149,8 @@ def main():
             for item in result:
                 print(f"{item['type']}: {item['name']}")
         elif choice == "3":
-            repo = input("repository name: ")
-            create_repo(repo)
-        elif choice == "4":
             list_repos()
-        elif choice == "5":
+        elif choice == "4":
             break
         else:
             print("Invalid choice!")
